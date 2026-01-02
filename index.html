@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cabaran Tanpa Telefon</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            max-width: 900px;
+            width: 90%;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .status {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            font-weight: bold;
+        }
+
+        .timer-display {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .time-unit {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 30px 20px;
+            border-radius: 20px;
+            min-width: 140px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .time-value {
+            font-size: 4em;
+            font-weight: bold;
+            line-height: 1;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        }
+
+        .time-label {
+            font-size: 1.2em;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        .countdown-info {
+            margin-top: 40px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            font-size: 1.5em;
+        }
+
+        .motivation {
+            margin-top: 30px;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .progress-bar {
+            margin-top: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00d4ff);
+            transition: width 1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 CABARAN TANPA TELEFON</h1>
+        <div class="status" id="status">Menunggu Event Bermula...</div>
+        
+        <div class="timer-display">
+            <div class="time-unit">
+                <div class="time-value" id="hours">00</div>
+                <div class="time-label">JAM</div>
+            </div>
+            <div class="time-unit">
+                <div class="time-value" id="minutes">00</div>
+                <div class="time-label">MINIT</div>
+            </div>
+            <div class="time-unit">
+                <div class="time-value" id="seconds">00</div>
+                <div class="time-label">SAAT</div>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar" style="width: 0%">
+                <span id="progressText">0%</span>
+            </div>
+        </div>
+
+        <div class="countdown-info" id="countdownInfo">
+            Event bermula pada 00:00 tengah malam
+        </div>
+
+        <div class="motivation" id="motivation">
+            💪 KAMU BOLEH BUAT! 💪
+        </div>
+    </div>
+
+    <script>
+        // Set tarikh mula event - ESOK jam 12 tengah malam
+        const eventStartDate = new Date();
+        eventStartDate.setDate(eventStartDate.getDate() + 1); // Esok
+        eventStartDate.setHours(0, 0, 0, 0); // 12 tengah malam
+
+        // Set tarikh tamat event - ESOK jam 8 malam
+        const eventEndDate = new Date();
+        eventEndDate.setDate(eventEndDate.getDate() + 1); // Esok
+        eventEndDate.setHours(20, 0, 0, 0); // 8 malam
+
+        function updateTimer() {
+            const now = new Date();
+
+            const statusEl = document.getElementById('status');
+            const hoursEl = document.getElementById('hours');
+            const minutesEl = document.getElementById('minutes');
+            const secondsEl = document.getElementById('seconds');
+            const countdownInfoEl = document.getElementById('countdownInfo');
+            const motivationEl = document.getElementById('motivation');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+
+            // Cek status event
+            if (now < eventStartDate) {
+                // Event belum bermula
+                statusEl.textContent = '⏰ MENUNGGU EVENT BERMULA...';
+                statusEl.style.background = 'rgba(255, 255, 68, 0.3)';
+                
+                // Kira masa ke event start
+                const diff = eventStartDate - now;
+                const hoursUntil = Math.floor(diff / (1000 * 60 * 60));
+                const minutesUntil = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const secondsUntil = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                countdownInfoEl.innerHTML = `<strong>Event bermula dalam:</strong><br>${hoursUntil} jam ${minutesUntil} minit ${secondsUntil} saat lagi`;
+                motivationEl.textContent = '😴 TIDUR AWAL, BANGUN FRESH UNTUK CABARAN!';
+                
+                hoursEl.textContent = '00';
+                minutesEl.textContent = '00';
+                secondsEl.textContent = '00';
+                
+                progressBar.style.width = '0%';
+                progressText.textContent = 'Belum Bermula';
+
+            } else if (now >= eventStartDate && now < eventEndDate) {
+                // Event sedang berlangsung
+                statusEl.textContent = '🔥 EVENT SEDANG BERLANGSUNG! STAY STRONG! 🔥';
+                statusEl.style.background = 'rgba(255, 68, 68, 0.3)';
+
+                // Kira masa yang tinggal sehingga event tamat
+                const diff = eventEndDate - now;
+                const remainingHours = Math.floor(diff / (1000 * 60 * 60));
+                const remainingMinutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const remainingSeconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                hoursEl.textContent = String(remainingHours).padStart(2, '0');
+                minutesEl.textContent = String(remainingMinutes).padStart(2, '0');
+                secondsEl.textContent = String(remainingSeconds).padStart(2, '0');
+
+                countdownInfoEl.textContent = `Masa berbaki sehingga 20:00 malam!`;
+
+                // Kira progress
+                const totalDuration = eventEndDate - eventStartDate;
+                const elapsed = now - eventStartDate;
+                const progressPercent = Math.min(100, (elapsed / totalDuration) * 100);
+                
+                progressBar.style.width = progressPercent + '%';
+                progressText.textContent = progressPercent.toFixed(1) + '%';
+
+                const messages = [
+                    '💪 KAMU BOLEH BUAT!',
+                    '🌟 TETAP KUAT!',
+                    '🔥 JANGAN GIVE UP!',
+                    '⚡ HAMPIR BERJAYA!',
+                    '🏆 YOU GOT THIS!'
+                ];
+                motivationEl.textContent = messages[Math.floor(Math.random() * messages.length)];
+
+            } else {
+                // Event sudah tamat
+                statusEl.textContent = '✅ TAHNIAH! KAMU BERJAYA!';
+                statusEl.style.background = 'rgba(68, 255, 68, 0.3)';
+                motivationEl.textContent = '🎉 WELL DONE! KAMU MEMANG TERBAIK! 🎉';
+                
+                countdownInfoEl.textContent = 'Cabaran selesai! Kamu tahan 20 jam tanpa telefon!';
+                
+                hoursEl.textContent = '00';
+                minutesEl.textContent = '00';
+                secondsEl.textContent = '00';
+                
+                progressBar.style.width = '100%';
+                progressBar.style.background = 'linear-gradient(90deg, #00ff88, #ffd700)';
+                progressText.textContent = '100% - SELESAI!';
+            }
+        }
+
+        // Update setiap saat
+        updateTimer();
+        setInterval(updateTimer, 1000);
+    </script>
+</body>
+</html>
